@@ -2,7 +2,11 @@
   <div class="sy">
     <el-row>
       <el-col :span="3">
-        <el-menu :default-active="activeIndex" class="el-menu-vertical-demo" @select="handleSelect">
+        <el-menu
+          :default-active="activeIndex"
+          class="el-menu-vertical-demo"
+          @select="handleSelect"
+        >
           <el-menu-item index="1">
             <img class="dhtp" src="/static/sy.png" />
             <span slot="title">系统首页</span>
@@ -24,6 +28,10 @@
             <img class="dhtp" src="/static/ddgl.png" />
             <span slot="title">订单管理</span>
           </el-menu-item>
+          <el-menu-item index="8">
+            <img class="dhtp" src="/static/wxgl.png" />
+            <span slot="title">微信管理</span>
+          </el-menu-item>
           <!-- <el-menu-item index="6" v-if="zhqx.roleName=='管理员'">
             <img class="dhtp" src="/static/ylmx.png" />
             <span slot="title">盈利明细</span>
@@ -37,7 +45,7 @@
             style="    width: 48px;
     height: 38px;"
             @click="fz"
-            v-if="zhqx.roleName=='管理员'"
+            v-if="zhqx.roleName == '管理员'"
           />
           <!-- <el-dropdown>
             <span class="el-dropdown-link">
@@ -50,26 +58,29 @@
           </el-dropdown>-->
         </div>
         <div class="bjs">
-          <div v-if="key2==1">
+          <div v-if="key2 == 1">
             <xtsy></xtsy>
           </div>
-          <div v-else-if="key2==2">
+          <div v-else-if="key2 == 2">
             <gdjl></gdjl>
           </div>
-          <div v-else-if="key2==3">
+          <div v-else-if="key2 == 3">
             <shgl></shgl>
           </div>
-          <div v-else-if="key2==4">
+          <div v-else-if="key2 == 4">
             <xsmx></xsmx>
           </div>
-          <div v-else-if="key2==5">
+          <div v-else-if="key2 == 5">
             <ddgl></ddgl>
           </div>
-          <div v-else-if="key2==6">
+          <div v-else-if="key2 == 6">
             <ylmx></ylmx>
           </div>
-          <div v-else-if="key2==7">
+          <div v-else-if="key2 == 7">
             <fz></fz>
+          </div>
+          <div v-else-if="key2 == 8">
+            <wxgl></wxgl  >
           </div>
         </div>
       </el-col>
@@ -86,6 +97,7 @@ import xsmx from "./xsmx.vue";
 import ddgl from "./ddgl.vue";
 import ylmx from "./ylmx.vue";
 import fz from "./fz.vue";
+import wxgl from "./wxgl.vue";
 export default {
   name: "sy",
   components: {
@@ -95,7 +107,8 @@ export default {
     xsmx,
     ddgl,
     ylmx,
-    fz
+    fz,
+    wxgl
   },
   data() {
     return {
@@ -104,10 +117,15 @@ export default {
     };
   },
   mounted() {
-    console.log(sessionStorage.getItem("activeIndex"))
-      this.activeIndex = sessionStorage.getItem("activeIndex")!=null?sessionStorage.getItem("activeIndex"):'1'
-      this.key2 = sessionStorage.getItem("activeIndex")!=null?sessionStorage.getItem("activeIndex"):'1'
-   
+    console.log(sessionStorage.getItem("activeIndex"));
+    this.activeIndex =
+      sessionStorage.getItem("activeIndex") != null
+        ? sessionStorage.getItem("activeIndex")
+        : "1";
+    this.key2 =
+      sessionStorage.getItem("activeIndex") != null
+        ? sessionStorage.getItem("activeIndex")
+        : "1";
   },
   computed: mapState(["zhqx"]),
   methods: {
@@ -131,7 +149,7 @@ export default {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped  lang="scss">
+<style scoped lang="scss">
 .dhtp {
   width: 16px;
   height: 16px;

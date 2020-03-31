@@ -194,7 +194,7 @@ export default {
       this.$axios
         .get(this.ip + "/orders", {
           params: {
-            limit: 10,
+            limit: 7,
             page: this.dqy,
             orderNo: this.sxform.orderNo,
             wangwang: this.sxform.wangwang,
@@ -236,7 +236,7 @@ export default {
       this.$axios
         .get(this.ip + "/orders", {
           params: {
-            limit: 10,
+            limit: 7,
             page: this.dqy,
             orderNo: this.sxform.orderNo,
             wangwang: this.sxform.wangwang,
@@ -305,7 +305,7 @@ export default {
       this.$axios
         .get(this.ip + "/orders", {
           params: {
-            limit: 10,
+            limit: 7,
             page: this.dqy,
 
             userId: this.zhqx.userId

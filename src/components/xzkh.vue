@@ -5,7 +5,7 @@
       :model="form"
       label-width="85px"
       label-position="right"
-      v-if="tckbt == '新增客户'"
+      v-if="tckbt == '新增客户' || tckbt == '高级搜索' || tckbt == '编辑客户'"
     >
       <el-row>
         <el-col
@@ -46,7 +46,7 @@
                 @city="onChangeCity"
                 @area="onChangearea"
               ></Distpicker>
-              <el-input v-model="form[item.prop].detail"></el-input>
+              <el-input v-model="form.detail"></el-input>
             </div>
             <el-date-picker
               v-model="form[item.prop]"
@@ -69,32 +69,9 @@
           </el-form-item>
         </el-col>
       </el-row>
-      <el-button type="primary" @click="onSubmit">确定</el-button>
+      <el-button type="primary" @click="onSubmit" class="qdan">确定</el-button>
     </el-form>
-    <el-form
-      ref="gjslform"
-      :model="gjslform"
-      label-width="100px"
-      label-position="right"
-      v-else-if="tckbt == '高级搜索'"
-    >
-      <el-form-item
-        :label="item.label"
-        v-for="(item, index) in gjsl"
-        :key="index"
-      >
-        <el-date-picker
-          v-model="gjslform[item.prop]"
-          type="date"
-          placeholder="选择日期"
-          v-if="item.label == '跟单时间'"
-          value-format="yyyy-MM-dd"
-        ></el-date-picker>
-        <el-input v-model="gjslform[item.prop]" v-else></el-input>
-      </el-form-item>
 
-      <el-button type="primary" @click="gjssqd">确定</el-button>
-    </el-form>
     <el-form
       ref="gjslform"
       :model="tjddform"
@@ -137,12 +114,24 @@
               v-else-if="item.label == '备注'"
               width="300"
             ></el-input>
+            <el-select
+              v-model="tjddform[item.prop]"
+              placeholder="请选择"
+              v-else-if="item.label == '拍货类型'"
+            >
+              <el-option
+                v-for="item2 in item.options"
+                :key="item2.value"
+                :label="item2.label"
+                :value="item2.value"
+              ></el-option>
+            </el-select>
             <el-input v-model="tjddform[item.prop]" v-else></el-input>
           </el-form-item>
         </el-col>
       </el-row>
 
-      <el-button type="primary" @click="tjdqqd">确定</el-button>
+      <el-button type="primary" @click="tjdqqd" class="qdan">确定</el-button>
     </el-form>
     <div v-else class="xqcss">
       <el-row>
@@ -158,6 +147,7 @@
 import Distpicker from "v-distpicker";
 import { mapState, mapMutations } from "vuex";
 import sjcolumns from "./bgsj";
+import { putqqdg } from "./serve";
 export default {
   name: "xzkh",
   components: { Distpicker },
@@ -171,17 +161,14 @@ export default {
   watch: {
     xqsj(newVal, oldVal) {
       console.log(newVal);
+    },
+    tckbt(newVal, oldVal) {
+      this.pdtckbt(newVal);
     }
   },
   data() {
     return {
-      form: {
-        address: {
-          xtrysf: "",
-          xtrycs: "",
-          detail: ""
-        }
-      },
+      form: {},
       tjddform: {}, //添加订单表单
       ddsj: [], //订单头部
       gjslform: {
@@ -221,7 +208,11 @@ export default {
     // sjcolumns.sjcolumns.forEach(item => {
     //   this.form[item.prop] = "";
     // });
+    this.pdtckbt(this.tckbt);
+
     console.log(this.csxqdsja);
+    console.log(this.xqsj);
+
     this.items = sjcolumns;
     sjcolumns.ddglsj.forEach(item => {
       item.label != "序号" &&
@@ -236,9 +227,32 @@ export default {
       prop: "useTime",
       label: "消耗时间(天)"
     });
-    this.cpxllb();
+    // this.cpxllb();
   },
   methods: {
+    //判断弹出框标题是编辑还是新增
+    pdtckbt(val) {
+      if (val == "编辑客户") {
+        console.log(val);
+
+        this.form = this.xqsj;
+        this.form.address = {};
+        this.form.address.xtrysf = this.xqsj.xtrysf;
+        this.form.address.xtrycs = this.xqsj.xtrycs;
+        this.form.address.xtryqy = this.xqsj.xtryqy;
+
+        console.log(this.form);
+      } else {
+        console.log(val);
+        this.form = {
+          address: {
+            xtrysf: "",
+            xtrycs: "",
+            detail: ""
+          }
+        };
+      }
+    },
     onChangeProvince(data) {
       this.form.address.xtrysf = data.value;
     },
@@ -273,8 +287,8 @@ export default {
         });
     },
     //高级搜索确定
-    gjssqd() {
-      this.$emit("gjssqd", this.gjslform);
+    gjssqd(val) {
+      this.$emit("gjssqd", val);
       this.gjslform = {
         wangwang: "",
         followTime: "",
@@ -305,23 +319,38 @@ export default {
     onSubmit() {
       var that = this;
       this.form.userId = this.userId;
-      this.form.updateTime = this.nowTime;
+
       this.form.userId = this.userId;
       this.form.billingPerson = this.zh;
-      this.$axios
-        .post(this.ip + "/customers", this.form)
-        .then(function(response) {
-          console.log(response);
-          that.$message({
-            message: "新增客户成功",
+      if (this.tckbt == "新增客户") {
+        this.form.updateTime = this.nowTime;
+        this.$axios
+          .post(this.ip + "/customers", this.form)
+          .then(function(response) {
+            console.log(response);
+            that.$message({
+              message: "新增客户成功",
+              type: "success"
+            });
+            that.$emit("closecp", {});
+          })
+          .catch(function(error) {
+            console.log(error);
+          });
+        // 2;
+        console.log(this.form);
+      } else if (this.tckbt == "编辑客户") {
+        putqqdg(this.form.id, "customers", this.form).then(val => {
+          console.log(val);
+          this.$message({
+            message: "编辑客户成功",
             type: "success"
           });
-          that.$emit("closecp", {});
-        })
-        .catch(function(error) {
-          console.log(error);
+          this.$emit("closecp", {});
         });
-      console.log(this.form);
+      } else {
+        this.gjssqd(this.form);
+      }
     },
     querySearchAsync(queryString, cb) {
       var restaurants = this.restaurants;
@@ -364,5 +393,9 @@ export default {
 }
 .distpicker-address-wrapper {
   display: flex;
+}
+.qdan {
+  margin-left: 41%;
+  width: 184px;
 }
 </style>

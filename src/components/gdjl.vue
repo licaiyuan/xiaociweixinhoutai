@@ -1,15 +1,29 @@
 <template>
   <div class="gdjl">
-    <el-form ref="sxform" :model="sxform" label-width="100px" label-position="right" :inline="true">
-      <el-form-item :label="item.label" v-for="(item,index) in sxsjgs" :key="index">
+    <el-form
+      ref="sxform"
+      :model="sxform"
+      label-width="100px"
+      label-position="right"
+      :inline="true"
+    >
+      <el-form-item
+        :label="item.label"
+        v-for="(item, index) in sxsjgs"
+        :key="index"
+      >
         <el-date-picker
           v-model="sxform[item.prop]"
-          v-if="item.label=='下次联系'"
+          v-if="item.label == '下次联系'"
           type="date"
           placeholder="选择日期"
           value-format="yyyy-MM-dd"
         ></el-date-picker>
-        <el-select v-model="sxform[item.prop]" placeholder="请选择" v-else-if="item.label=='跟单进度'">
+        <el-select
+          v-model="sxform[item.prop]"
+          placeholder="请选择"
+          v-else-if="item.label == '跟单进度'"
+        >
           <el-option
             v-for="item in item.option"
             :key="item.value"
@@ -24,23 +38,28 @@
 
     <el-table :data="tableData" border style="width: 100%">
       <el-table-column
-        v-for="(item,index) in columns "
+        v-for="(item, index) in columns"
         :key="index"
         :prop="item.prop"
         :label="item.label"
         align="center"
-        :width="(item.label=='详情备注')?'250':''"
+        :width="item.label == '详情备注' ? '250' : ''"
       ></el-table-column>
 
       <el-table-column label="操作" width="150" fixed="right">
         <template slot-scope="scope">
-          <el-button type="primary" icon="el-icon-edit" circle @click="bj(scope.row)"></el-button>
+          <el-button
+            type="primary"
+            icon="el-icon-edit"
+            circle
+            @click="bj(scope.row)"
+          ></el-button>
           <el-button
             type="primary"
             icon="el-icon-delete"
             circle
             @click="sc(scope.row)"
-            v-if="zhqx.roleName=='管理员'"
+            v-if="zhqx.roleName == '管理员'"
           ></el-button>
         </template>
       </el-table-column>
@@ -156,11 +175,11 @@ export default {
       this.status = "查询状态";
       this.currentpage = 1;
       this.sxform.userId = this.zhqx.userId;
-      this.sxform.limit = 10;
+      this.sxform.limit = 7;
       this.sxform.page = this.page;
       var that = this;
       this.$axios
-        .post(this.ip+"/order-follows/list", this.sxform)
+        .post(this.ip + "/order-follows/list", this.sxform)
         .then(function(response) {
           that.tableData = response.data.data.records;
           that.total = response.data.data.total;
@@ -181,11 +200,11 @@ export default {
       this.status = "查询状态";
 
       this.sxform.userId = this.zhqx.userId;
-      this.sxform.limit = 10;
+      this.sxform.limit = 7;
       this.sxform.page = this.page;
       var that = this;
       this.$axios
-        .post(this.ip+"/order-follows/list", this.sxform)
+        .post(this.ip + "/order-follows/list", this.sxform)
         .then(function(response) {
           that.tableData = response.data.data.records;
           that.total = response.data.data.total;
@@ -218,7 +237,7 @@ export default {
       console.log(row);
       var that = this;
       this.$axios
-        .delete(this.ip+"/order-follows/" + row.orderFollowId)
+        .delete(this.ip + "/order-follows/" + row.orderFollowId)
         .then(function(response) {
           console.log(response);
           that.$message({
@@ -236,9 +255,9 @@ export default {
     cxgdjl() {
       var _this = this;
       this.$axios
-        .post(this.ip+"/order-follows/list", {
+        .post(this.ip + "/order-follows/list", {
           page: this.page,
-          limit: 10,
+          limit: 7,
           userId: this.zhqx.userId,
           nextLinktime: "",
           process: "",
@@ -264,7 +283,7 @@ export default {
   }
 };
 </script>
-<style scoped >
+<style scoped>
 .gdjl {
   padding: 20px;
 }

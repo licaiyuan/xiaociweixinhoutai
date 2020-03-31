@@ -1,0 +1,12 @@
+@mixin flexa(
+  $fx: row,
+  $alignitem: center,
+  $justcontent: flex-start,
+  $wrap: wrap
+) {
+  display: flex;
+  flex-direction: $fx;
+  align-items: center;
+  justify-content: $justcontent;
+  flex-wrap: $wrap;
+}

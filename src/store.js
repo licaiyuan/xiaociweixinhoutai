@@ -7,6 +7,7 @@ const state = {
     nowTime: '',
     // ip: 'http://39.108.180.151:10086',
     ip: 'http://39.108.180.151:10010',
+    // ip: 'http://49.234.185.250:10000',
     csxqdsja: ''
 }
 const mutations = {

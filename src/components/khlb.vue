@@ -12,9 +12,27 @@
         end-placeholder="结束日期"
         value-format="yyyy-MM-dd"
       ></el-date-picker>
-      <a :href="dc()">
+      <p>导出类型:</p>
+      <el-select v-model="dclx" placeholder="请选择">
+        <el-option
+          v-for="item2 in dclxs"
+          :key="item2.value"
+          :label="item2.label"
+          :value="item2.value"
+        ></el-option>
+      </el-select>
+      <a :href="dc()" v-if="zhqx.roleName == '管理员'">
         <el-button type="primary" plain>导出</el-button>
       </a>
+      <el-upload
+        class="upload-demo"
+        action="http://39.108.180.151:10010/excel"
+        multiple
+      >
+        <el-button plain type="danger" v-if="zhqx.roleName == '管理员'"
+          >导入</el-button
+        >
+      </el-upload>
     </div>
     <el-table :data="tableData" style="width: 100%;margin-top:20px" border>
       <el-table-column
@@ -46,6 +64,12 @@
             icon="el-icon-delete"
             circle
             @click="sc(scope.row)"
+          ></el-button>
+          <el-button
+            type="primary"
+            icon="el-icon-edit"
+            circle
+            @click="bjkh(scope.row)"
           ></el-button>
         </template>
       </el-table-column>
@@ -100,6 +124,21 @@ export default {
   },
   data() {
     return {
+      dclxs: [
+        {
+          value: "全部",
+          lable: "全部"
+        },
+        {
+          value: "微信老客户",
+          lable: "微信老客户"
+        },
+        {
+          value: "天猫客户",
+          lable: "天猫客户"
+        }
+      ], //所有导出类型
+      dclx: "", //导出类型
       dcrq: "", //导出日期
       status: "normal", //请求客户列表状态
       gjssbcxx: "", //上次保存的搜索选项
@@ -125,7 +164,9 @@ export default {
           "&beginTime=" +
           ks +
           "&endTime=" +
-          js
+          js +
+          "&type=" +
+          this.dclx
       );
       // this.$axios
       //   .get(`${this.ip}/orders/exportExcel?userId=1`, {
@@ -147,7 +188,9 @@ export default {
           "&beginTime=" +
           ks +
           "&endTime=" +
-          js
+          js +
+          "&type=" +
+          this.dclx
         );
       } else {
         return `${this.ip}/orders/exportExcel?userId=1`;
@@ -235,7 +278,7 @@ export default {
       let _this = this;
       this.gjssbcxx = val;
       val.userId = this.zhqx.userId;
-      val.limit = 10;
+      val.limit = 7;
 
       this.status = "search";
       val.page = page;
@@ -252,13 +295,20 @@ export default {
           console.log(error);
         });
     },
+    //编辑客户
+    bjkh(val) {
+      console.log(val);
+      this.xqsj = val;
+      this.tckbt = "编辑客户";
+      this.dialogVisible = true;
+    },
     //客户列表
     khlb() {
       var _this = this;
       this.$axios
         .get(this.ip + "/customers/queryCustomerList", {
           params: {
-            limit: 10,
+            limit: 7,
             page: this.dqy,
             roleId: this.zhqx.roleId,
             userId: this.zhqx.userId
@@ -293,4 +343,10 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style lang="scss" scoped>
+@import "common.scss";
+.san {
+  @include flexa(row, center, space-around);
+  width: 1200px;
+}
+</style>
