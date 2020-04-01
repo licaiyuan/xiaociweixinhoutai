@@ -18,7 +18,27 @@
       ></el-input>
       <el-button type="primary" icon="el-icon-plus" @click="addwxh"></el-button>
     </div>
-    <p>所有客户人数:{{ wwsyrs }}人</p>
+    <div class="hzp">
+      <el-date-picker
+        type="daterange"
+        v-model="khrq"
+        range-separator="至"
+        start-placeholder="开始日期"
+        end-placeholder="结束日期"
+        value-format="yyyy-MM-dd"
+        @change="khrqgb"
+      ></el-date-picker>
+      <p style="margin-left:10px">所有客户人数:{{ wwsyrs }}人</p>
+    </div>
+    <el-drawer title="重复旺旺号详情" :visible.sync="drawer" direction="rtl">
+      <bgmk
+        style="width: 100%;height: 800px;width: ov;overflow: auto;"
+        :datas="sjhzscfww"
+        :tablecolumn="tablecolumncfww"
+        sy="wm"
+        :pagesize="1000"
+      ></bgmk>
+    </el-drawer>
     <bgmk
       :datas="sjhzs"
       :tablecolumn="tablecolumn"
@@ -26,6 +46,7 @@
       @lr="lr"
       @hy="hywx"
       @wxsc="wxsc"
+      :pagesize="7"
       sy="wm"
     ></bgmk>
     <el-dialog :title="title" :visible.sync="dialogVisible" width="50%">
@@ -37,6 +58,7 @@
         @hy="hyww"
         @gbtjzt="gbtjzt"
         @sc="scww"
+        :pagesize="7"
       ></bgmk>
       <div v-else>
         <div class="hzp" v-if="zhqx.roleName == '管理员'">
@@ -163,13 +185,14 @@ import { mapState, mapMutations } from "vuex";
 import { getqq, postqq, putqq, deleteqq } from "./serve";
 import axios from "axios";
 import bgmk from "../commonComponent/bgmk.vue";
+import { Loading } from "element-ui";
 export default {
   name: "wxgl",
   beforeMount() {},
   components: { bgmk },
   mounted() {
     this.wxlbqq();
-    this.qqsywwrs();
+    this.qqsywwrs("", "");
   },
   computed: mapState(["ip", "zhqx"]),
   created() {},
@@ -177,6 +200,13 @@ export default {
     ...mapMutations({
       dlvuex: "dlvuex"
     }),
+    //客户日期改变
+    khrqgb(val) {
+      const [ks, js] = val;
+      this.qqsywwrs(ks, js);
+      console.log(ks);
+      console.log(js);
+    },
     //删除微信号
     wxsc(val) {
       console.log(val);
@@ -209,8 +239,11 @@ export default {
       });
     },
     //请求所有旺旺人数
-    qqsywwrs() {
-      getqq({ type: 0 }, "wechat-manager/queryCount").then(({ data }) => {
+    qqsywwrs(ks, js) {
+      getqq(
+        { type: 0, beginTime: ks, endTime: js },
+        "wechat-manager/queryCount"
+      ).then(({ data }) => {
         this.wwsyrs = data["data"];
       });
     },
@@ -240,6 +273,12 @@ export default {
     },
     //文件确定录入
     wjqdlr() {
+      const loading = this.$loading({
+        lock: true,
+        text: "Loading",
+        spinner: "el-icon-loading",
+        background: "rgba(0, 0, 0, 0.7)"
+      });
       let _this = this;
       let formData = new FormData();
       //   formData.append("storeId", this.xzdp);
@@ -258,10 +297,14 @@ export default {
         console.log(res);
         _this.dialogVisible = false;
         _this.$message({
-          message: "手动录入成功",
+          message: "文件录入成功",
           type: "success"
         });
+
+        loading.close();
         _this.qqsywwrs();
+        _this.sjhzscfww = { total: 0, records: res["data"].data };
+        res["data"].data.length != 0 ? (_this.drawer = true) : "";
       });
     },
     //改变添加状态请求旺旺
@@ -320,7 +363,10 @@ export default {
         type: "success"
       });
       this.qqsywwrs();
-      console.log(res);
+      this.sjhzscfww = { total: 0, records: res["data"].data };
+      res["data"].data.length != 0 ? (this.drawer = true) : "";
+
+      console.log(res["data"].data);
     },
     //手动添加旺旺的一系列方法
     handleCloseww(tag) {
@@ -461,6 +507,9 @@ export default {
   },
   data() {
     return {
+      sjhzscfww: "", //重复旺旺数据
+      khrq: "", //客户日期
+      drawer: false, //抽屉显示
       tjdwxh: "", //添加的微信号
       wwsyrs: "", //旺旺所有人数
       wxhww: "", //微信或者旺旺搜索
@@ -500,7 +549,14 @@ export default {
           { lable: "时间", prop: "addTime" }
         ],
         gj: [{ name: "删除", method: "sc" }]
-      } //旺旺列表模板
+      }, //旺旺列表模板
+      tablecolumncfww: {
+        pt: [
+          { lable: "旺旺号", prop: "wangwang" },
+          { lable: "店铺", prop: "storeName" },
+          { lable: "微信号", prop: "wechatNo" }
+        ]
+      }////重复旺旺列表模板
     };
   }
 };

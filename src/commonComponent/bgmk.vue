@@ -60,7 +60,7 @@
     <el-pagination
       layout="prev, pager, next"
       :total="datas.total"
-      :page-size="7"
+      :page-size="pagesize"
       @current-change="hy"
     >
     </el-pagination>
@@ -73,7 +73,7 @@ import { putqqdg } from "../components/serve";
 export default {
   name: "bgmk",
   beforeMount() {},
-  props: ["datas", "tablecolumn", "sy"],
+  props: ["datas", "tablecolumn", "sy", "pagesize"],
   mounted() {
     console.log(this.datas);
     console.log(this.tablecolumn);
@@ -113,6 +113,10 @@ export default {
     datas(newName, oldName) {
       this.datas = newName;
       console.log(this.datas);
+    },
+    tablecolumn(newName, oldName) {
+      this.tablecolumn = newName;
+      console.log(this.tablecolumn);
     }
   },
   data() {
