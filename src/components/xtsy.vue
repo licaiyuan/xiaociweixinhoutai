@@ -7,7 +7,7 @@
       <el-tab-pane label="高级搜索" name="gjss" >高级搜索</el-tab-pane>
       <el-tab-pane label="新增客户" name="xzkh">新增客户</el-tab-pane>
     </el-tabs> -->
-     <khlb></khlb>
+    <khlb></khlb>
   </div>
 </template>
 
@@ -20,12 +20,10 @@ export default {
   },
   data() {
     return {
-      activeName: "khlb",
-   
+      activeName: "khlb"
     };
   },
   methods: {
-  
     handleClick(tab, event) {
       console.log(tab, event);
     }
@@ -33,7 +31,7 @@ export default {
 };
 </script>
 
-<style  scoped>
+<style scoped>
 .dashboard-editor-container {
   padding: 32px;
   background-color: white;

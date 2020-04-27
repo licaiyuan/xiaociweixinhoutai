@@ -3,7 +3,11 @@
     <div class="szpl">
       <p>后台管理中心欢迎您</p>
       <el-input v-model="zh" placeholder="请输入账号"></el-input>
-      <el-input v-model="mm" placeholder="请输入密码" type="password"></el-input>
+      <el-input
+        v-model="mm"
+        placeholder="请输入密码"
+        type="password"
+      ></el-input>
       <el-button type="primary" @click="dl">登录</el-button>
     </div>
     <img src="/static/dlkbjt.png" class="dlkbjt" />
@@ -31,11 +35,10 @@ export default {
       dlvuex: "dlvuex"
     }),
     dl() {
-     
       var _this = this;
       this.$axios
         .post(this.ip + "/login", {
-          username: this.zh,
+          username: this.zh,  
           password: this.mm
         })
         .then(function(response) {

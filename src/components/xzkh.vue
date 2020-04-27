@@ -17,7 +17,7 @@
             <el-select
               v-model="form[item.prop]"
               placeholder="请选择"
-              v-if="item.label == '粉丝级别' || item.label == '客户来源'"
+              v-if="item.label == '粉丝级别' || item.label == '拍单类型'"
             >
               <el-option
                 v-for="item in item.options"
@@ -156,19 +156,32 @@ export default {
     userId: {},
     xqsj: "",
     nowTime: {},
-    zh: {}
+    zh: {},
+    form: {}
   },
   watch: {
-    xqsj(newVal, oldVal) {
-      console.log(newVal);
+    xqsj: {
+      handler: function(val, oldVal) {
+        console.log(val);
+        // this.pdtckbt(this.tckbt);
+      },
+      deep: true //对象内部的属性监听，也叫深度监听
     },
-    tckbt(newVal, oldVal) {
-      this.pdtckbt(newVal);
+    csxqdsja: {
+      handler: function(newVal, oldval) {
+        console.log(newVal);
+        // this.csxqdsja = newVal;
+      },
+      deep: true //对象内部的属性监听，也叫深度监听
     }
+
+    // tckbt(newVal, oldVal) {
+    //   this.pdtckbt(newVal);
+    // }
   },
   data() {
     return {
-      form: {},
+      // form: {},
       tjddform: {}, //添加订单表单
       ddsj: [], //订单头部
       gjslform: {
@@ -208,7 +221,7 @@ export default {
     // sjcolumns.sjcolumns.forEach(item => {
     //   this.form[item.prop] = "";
     // });
-    this.pdtckbt(this.tckbt);
+    // this.pdtckbt(this.tckbt);
 
     console.log(this.csxqdsja);
     console.log(this.xqsj);
@@ -320,7 +333,7 @@ export default {
       var that = this;
       this.form.userId = this.userId;
 
-      this.form.userId = this.userId;
+      // this.form.userId = this.userId;
       this.form.billingPerson = this.zh;
       if (this.tckbt == "新增客户") {
         this.form.updateTime = this.nowTime;

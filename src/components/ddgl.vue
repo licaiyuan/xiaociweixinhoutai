@@ -80,6 +80,7 @@
       background
       layout="prev, pager, next"
       :total="total"
+      :page-size="7"
       @current-change="handleCurrentChange"
       :current-page="currentpage"
     ></el-pagination>
@@ -114,6 +115,10 @@ export default {
         {
           label: "下单时间",
           prop: "orderTime"
+        },
+        {
+          label: "业务员",
+          prop: "salesmanName"
         }
       ], //搜索的数据格式
       columns: [],
@@ -198,6 +203,7 @@ export default {
             page: this.dqy,
             orderNo: this.sxform.orderNo,
             wangwang: this.sxform.wangwang,
+            salesmanName: this.sxform.salesmanName,
             orderTime1:
               this.sxform.orderTime == undefined
                 ? ""
@@ -240,6 +246,7 @@ export default {
             page: this.dqy,
             orderNo: this.sxform.orderNo,
             wangwang: this.sxform.wangwang,
+            salesmanName: this.sxform.salesmanName,
             orderTime1:
               this.sxform.orderTime == undefined
                 ? ""

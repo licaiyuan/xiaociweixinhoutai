@@ -48,7 +48,7 @@ let sjcolumns = [
     ]
   },
   {
-    label: "客户来源",
+    label: "拍单类型",
     prop: "source",
     options: [
       {
@@ -122,7 +122,7 @@ let ddglsj = [
     label: "客户旺旺"
   },
   {
-    prop: "orderNo",
+    prop: "trackNo",
     label: "订单编号"
   },
   {

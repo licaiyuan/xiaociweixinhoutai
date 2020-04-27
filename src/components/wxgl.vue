@@ -19,6 +19,17 @@
       <el-button type="primary" icon="el-icon-plus" @click="addwxh"></el-button>
     </div>
     <div class="hzp">
+      <p>筛选类型:</p>
+      <el-select v-model="sxlx" placeholder="请选择" @change="sxgbsj">
+        <el-option
+          v-for="item in sxlxs"
+          :key="item.name"
+          :label="item.name"
+          :value="item.value"
+        >
+        </el-option>
+      </el-select>
+      <p>筛选日期:</p>
       <el-date-picker
         type="daterange"
         v-model="khrq"
@@ -29,6 +40,9 @@
         @change="khrqgb"
       ></el-date-picker>
       <p style="margin-left:10px">所有客户人数:{{ wwsyrs }}人</p>
+      <a :href="dc()" v-if="zhqx.roleName == '管理员'" style="margin-left:20px">
+        <el-button type="primary" plain>导出筛选的客户</el-button>
+      </a>
     </div>
     <el-drawer title="重复旺旺号详情" :visible.sync="drawer" direction="rtl">
       <bgmk
@@ -192,7 +206,7 @@ export default {
   components: { bgmk },
   mounted() {
     this.wxlbqq();
-    this.qqsywwrs("", "");
+    this.qqsywwrs();
   },
   computed: mapState(["ip", "zhqx"]),
   created() {},
@@ -200,12 +214,24 @@ export default {
     ...mapMutations({
       dlvuex: "dlvuex"
     }),
+    //删选改变事件
+    sxgbsj(val) {
+      console.log(val);
+      this.qqsywwrs();
+    },
+    //导出
+    dc() {
+      console.log(`${this.ip}/excel/exportWangWang?status=${this.sxlx}`);
+      return `${this.ip}/excel/exportWangWang?status=${this.sxlx}`;
+    },
     //客户日期改变
     khrqgb(val) {
       const [ks, js] = val;
-      this.qqsywwrs(ks, js);
-      console.log(ks);
-      console.log(js);
+
+      [this.ks, this.js] = val;
+      console.log(this.ks);
+      console.log(this.js);
+      this.qqsywwrs();
     },
     //删除微信号
     wxsc(val) {
@@ -239,9 +265,9 @@ export default {
       });
     },
     //请求所有旺旺人数
-    qqsywwrs(ks, js) {
+    qqsywwrs() {
       getqq(
-        { type: 0, beginTime: ks, endTime: js },
+        { type: 0, beginTime: this.ks, endTime: this.js, status: this.sxlx },
         "wechat-manager/queryCount"
       ).then(({ data }) => {
         this.wwsyrs = data["data"];
@@ -507,6 +533,13 @@ export default {
   },
   data() {
     return {
+      ks: "", //开始时间
+      js: "", //结束时间
+      sxlxs: [
+        { name: "已添加", value: 1 },
+        { name: "未添加", value: 0 }
+      ], //筛选的所有类型
+      sxlx: "", //筛选到的类型
       sjhzscfww: "", //重复旺旺数据
       khrq: "", //客户日期
       drawer: false, //抽屉显示
@@ -556,7 +589,7 @@ export default {
           { lable: "店铺", prop: "storeName" },
           { lable: "微信号", prop: "wechatNo" }
         ]
-      }////重复旺旺列表模板
+      } ////重复旺旺列表模板
     };
   }
 };

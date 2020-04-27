@@ -80,6 +80,7 @@
       :total="total"
       @current-change="handleCurrentChange"
       :current-page="dqy"
+      :page-size="7"
     ></el-pagination>
     <el-dialog :title="tckbt" :visible.sync="dialogVisible" width="73%">
       <xzkh
@@ -90,6 +91,7 @@
         @gjssqd="gjssqd"
         :xqsj="xqsj"
         :nowTime="nowTime"
+        :form="form"
       ></xzkh>
     </el-dialog>
   </div>
@@ -125,10 +127,10 @@ export default {
   data() {
     return {
       dclxs: [
-        {
-          value: "全部",
-          lable: "全部"
-        },
+        // {
+        //   value: "全部",
+        //   lable: "全部"
+        // },
         {
           value: "微信老客户",
           lable: "微信老客户"
@@ -148,7 +150,8 @@ export default {
       tableData: [],
       total: 0,
       dqy: 1, //当前页
-      xqsj: "" //详情数据
+      xqsj: "", //详情数据
+      form: "" //子组件数据
     };
   },
   methods: {
@@ -168,20 +171,7 @@ export default {
           "&type=" +
           this.dclx
       );
-      // this.$axios
-      //   .get(`${this.ip}/orders/exportExcel?userId=1`, {
-      //     params: {
-      //       beginTime: ks,
-      //       endTime: js
-      //     }
-      //   })
-      //   .then(function(response) {
-      //     console.log(response);
-      //   })
-      //   .catch(function(error) {
-      //     console.log(error);
-      //   });
-      // const that = this;
+
       if (this.dcrq) {
         return (
           `${this.ip}/orders/exportExcel?userId=1` +
@@ -248,7 +238,8 @@ export default {
           });
 
           _this.dialogVisible = true;
-          _this.csxqdsj(_this.xqsj);
+          _this.csxqdsj({ ..._this.xqsj });
+
           console.log(_this.xqsj);
         })
         .catch(function(error) {
@@ -300,7 +291,31 @@ export default {
       console.log(val);
       this.xqsj = val;
       this.tckbt = "编辑客户";
+      this.pdbt(this.tckbt);
       this.dialogVisible = true;
+    },
+    //判断标题
+    pdbt(val) {
+      if (val == "编辑客户") {
+        console.log(val);
+
+        this.form = this.xqsj;
+        this.form.address = {};
+        this.form.address.xtrysf = this.xqsj.xtrysf;
+        this.form.address.xtrycs = this.xqsj.xtrycs;
+        this.form.address.xtryqy = this.xqsj.xtryqy;
+
+        console.log(this.form);
+      } else {
+        console.log(val);
+        this.form = {
+          address: {
+            xtrysf: "",
+            xtrycs: "",
+            detail: ""
+          }
+        };
+      }
     },
     //客户列表
     khlb() {
@@ -334,10 +349,12 @@ export default {
     gjss() {
       this.dialogVisible = true;
       this.tckbt = "高级搜索";
+      this.pdbt(this.tckbt);
     },
     xzkh() {
       this.dialogVisible = true;
       this.tckbt = "新增客户";
+      this.pdbt(this.tckbt);
     }
   }
 };
